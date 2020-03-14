@@ -3,7 +3,6 @@ import React from 'react';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {View, Text, StyleSheet, Button} from 'react-native';
 import * as RootNavigation from '../../RootNavigation';
-
 declare var global: {HermesInternal: null | {}};
 
 export const Home = () => {
@@ -12,7 +11,11 @@ export const Home = () => {
       <Text>Home Screen</Text>
       <Button
         title="Go to Login"
-        onPress={() => RootNavigation.navigate('Login')}
+        onPress={() =>
+          RootNavigation.navigate('Login', {
+            message: 'Hello There',
+          })
+        }
       />
     </View>
   );
