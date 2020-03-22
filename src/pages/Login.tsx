@@ -1,23 +1,18 @@
 import React from 'react';
-
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {View, Text, StyleSheet} from 'react-native';
-
 import {useRoute, RouteProp} from '@react-navigation/native';
+import {AuthStackParmList} from '../../App';
 
 declare var global: {HermesInternal: null | {}};
 
-export type Props = {
-  message: string;
-};
-
-export const Login = (props: Props) => {
+export const Login = () => {
   const route = useRoute();
   const parms: any = route.params;
   return (
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
       <Text>Login Screen</Text>
-      <Text>{parms.message}</Text>
+      <Text>{parms.userId}</Text>
     </View>
   );
 };

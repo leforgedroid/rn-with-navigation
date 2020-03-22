@@ -8,46 +8,94 @@
  * @format
  */
 
-import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
-
-import {
-  // Header,
-  // LearnMoreLinks,
-  Colors,
-  // DebugInstructions,
-  // ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import React, {useState} from 'react';
+import {StyleSheet} from 'react-native';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {navigationRef} from './RootNavigation';
 import {Home} from './src/pages/Home';
 import {Splash} from './src/pages/Splash';
 import {Login} from './src/pages/Login';
+import {useInterval} from './src/hooks/Time';
 
-declare var global: {HermesInternal: null | {}};
+// React-navigation stack section
+type AppStackParmList = {
+  Home: {userId: string; name: string};
+  Login: {userId: string; name: string};
+  Splash: undefined;
+};
+const AppStack = createStackNavigator<AppStackParmList>();
 
-const Stack = createStackNavigator();
+// **** Start - Reducer section
+enum LoginActionType {
+  LogIn = 'login',
+  LogOut = 'logout',
+}
+interface ILoginState {
+  userId: string;
+  email: string;
+  token: string;
+}
+interface ILoginAction {
+  type: LoginActionType;
+  payload: {
+    userId: string;
+    email: string;
+    token: string;
+  };
+}
+const initialLoginState: ILoginState = {
+  userId: '',
+  email: '',
+  token: '',
+};
+const loginReducer: React.Reducer<ILoginState, ILoginAction> = (
+  state,
+  action,
+) => {
+  switch (action.type) {
+    case LoginActionType.LogIn:
+      return {
+        userId: 'leforge',
+        email: 'leforgedroid@gmail.com',
+        token: 'asdfasdf',
+      };
+    case LoginActionType.LogOut:
+      return {loggedIn: false, userId: '', email: '', token: ''};
+    default:
+      throw new Error('Login Reducer Action Type mismatch');
+  }
+};
+// **** End - Reducer section
 
-const App = () => {
+const App: React.FunctionComponent = () => {
+  const [hideSplash, setHideSplash] = useState(false);
+  const [authState, loginDispatch] = React.useReducer<
+    React.Reducer<ILoginState, ILoginAction>
+  >(loginReducer, initialLoginState);
+  useInterval(() => {
+    setHideSplash(true);
+  }, 2000);
+  if (!hideSplash) {
+    return <Splash />;
+  }
   return (
     <NavigationContainer ref={navigationRef}>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen
+      <AppStack.Navigator initialRouteName="Home">
+        <AppStack.Screen
           name="Home"
           component={Home}
+          initialParams={{userId: '', name: ''}}
           options={{title: 'My Home'}}
         />
-        <Stack.Screen name="Splash" component={Splash} />
-        <Stack.Screen name="Login" component={Login} />
-      </Stack.Navigator>
+        <AppStack.Screen
+          name="Login"
+          component={Login}
+          initialParams={{name: 'Tim LeForge', userId: 'test'}}
+          options={{title: 'Login'}}
+        />
+      </AppStack.Navigator>
     </NavigationContainer>
   );
 };
